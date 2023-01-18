@@ -1,245 +1,206 @@
-﻿#include <iostream> 
-
+#include <iostream>
+#include <tuple>
 using namespace std;
 
 int tabs = 0; //Для создания отступов
 int kol_vo = 0;
-//Кол-во отступов высчитывается по кол-ву рекурсивного вхождения при выводе в фукцию print 
-
 //Структура ветки 
 struct Branch
 
 {
+	char bukva;
 	int Data; //Поле данных 
-	Branch* LeftBranch; //УКАЗАТЕЛИ на соседние веточки 
+	Branch* LeftBranch; //УКАЗАТЕЛИ на соседние ветки 
 	Branch* RightBranch;
 };
 
 //Функция внесения данных 
+void Add(Branch*& tree, char b, int elem) {
+	Branch* tmp = new Branch();
+	tmp->bukva = b;
+	tmp->Data = elem;
+	tmp->LeftBranch = nullptr;
+	tmp->RightBranch = nullptr;
 
-void Add(int aData, Branch*& aBranch)
-
-{
-
-	//Если ветки не существует 
-
-	if (!aBranch)
-
-	{ //создадим ее и зададим в нее данные 
-		aBranch = new Branch;
-		aBranch->Data = aData;
-		aBranch->LeftBranch = 0;
-		aBranch->RightBranch = 0;
-		return;
-
+	if (tree == nullptr) {
+		tree = tmp;
 	}
-
-	else //Иначе сверим вносимое 
-		if (aBranch->Data < aData)
-		{ //Если оно меньше того, что в этой ветке - добавим влево 
-			Add(aData, aBranch->LeftBranch);
-		}
-		else
-		{ //Иначе в ветку справа 
-			Add(aData, aBranch->RightBranch);
-		};
-
+	else {
+		if (std::tie(tree->bukva, tree->Data) < std::tie(b, elem))
+			Add(tree->RightBranch, b, elem);
+		if (std::tie(tree->bukva, tree->Data) > std::tie(b, elem))
+			Add(tree->LeftBranch, b, elem);
+	}
 }
 
-//Функция вывода дерева 
+
 //печать
-void print(Branch* aBranch)
-
+void print(Branch* tree)
 {
-
-	if (!aBranch)
-		return; //Если ветки не существует - выходим. Выводить нечего 
-	tabs += 5; //Иначе увеличим счетчик рекурсивно вызванных процедур 
-	//Который будет считать нам отступы для красивого вывода 
-	print(aBranch->LeftBranch); //Выведем ветку и ее подветки слева 
-	for (int i = 0; i < tabs; i++)
-		cout << " "; //Потом отступы 
-	cout << aBranch->Data << endl; //Данные этой ветки 
-	print(aBranch->RightBranch);//И ветки, что справа 
-	tabs -= 5; //После уменьшим кол-во отступов 
+	if (!tree) return;
+	tabs += 5;
+	print(tree->RightBranch);
+	for (int i = 0; i < tabs; i++) std::cout << " ";
+	std::cout << tree->bukva << tree->Data << std::endl;
+	print(tree->LeftBranch);
+	tabs -= 5;
 	return;
-
 }
 
-int kol_ch(Branch*& aBranch)
-
-{
-	if (NULL == aBranch) return 0; //Если дерева нет, выходим 
-	if (aBranch->Data % 2 == 0)
-	{
-
-		kol_vo++;
-
+//поиск элемента
+bool FindElem(Branch* tree, char b, int elem) {
+	bool flag = false;
+	if (tree != nullptr) {
+		if (std::tie(tree->bukva, tree->Data) == (std::tie(b, elem)))
+		{
+			flag = true;
+			return flag;
+		}
+		else if (std::tie(tree->bukva, tree->Data) > (std::tie(b, elem)))
+		{
+			return FindElem(tree->LeftBranch, b, elem);
+		}
+		else return FindElem(tree->RightBranch, b, elem);
 	}
-	kol_ch(aBranch->LeftBranch); //Обошли левое поддерево 
-	kol_ch(aBranch->RightBranch); //Обошли правое поддерево 
-	return kol_vo;
-
+	else return flag;
 }
-void add_elem(int aData, Branch*& aBranch)
-
+//очистка памяти
+void Del_al(Branch*& tree)
 {
-
-	if (!aBranch)
-
+	if (tree == nullptr)
 	{
-		aBranch = new Branch;
-		aBranch->Data = aData;
-		aBranch->LeftBranch = 0;
-		aBranch->RightBranch = 0;
 		return;
 	}
 
-	else
-
-	{
-
-		if (aData > aBranch->Data) {
-			add_elem(aData, aBranch->LeftBranch);
-		}
-
-		else if (aData < aBranch->Data) {
-			add_elem(aData, aBranch->RightBranch);
-		}
-
-	}
-
+	Del_al(tree->LeftBranch);
+	Del_al(tree->RightBranch);
+	delete tree;
+	tree = nullptr;
 }
-
-/*void is_Empty(Branch*& aBranch)
-
+//сравнение
+bool inorder(Branch* Branch1, Branch* Branch2)//сравнение деревьев
 {
-
-	if (!aBranch)
-
-	{
-		cout << "Дерево пустое...";
+	while (Branch1 != nullptr && Branch2 != nullptr) {
+		if (Branch1->Data != Branch2->Data)
+			return false;
+		if (Branch1 != nullptr and Branch2 != nullptr)
+			return inorder(Branch1->LeftBranch, Branch2->LeftBranch) && inorder(Branch1->RightBranch, Branch2->RightBranch);
 	}
-
-	else
-
-	{
-		cout << "Дерево не пустое...";
-	}
-
-}*/
-
-
-
-//Очистка памяти
-void FreeTree(Branch* aBranch)
-
-{
-	if (!aBranch) return;
-	FreeTree(aBranch->LeftBranch);
-	FreeTree(aBranch->RightBranch);
-	delete aBranch;
-	return;
-
 }
-void sravn(int data, Branch* aBranch1, Branch* aBranch2) {
-	//для каждого дерева переменная хранящяя дату, их и сравниванием  решить вопрос с нулптр и датой
-
- }
-
-
-
-
 
 // удаление
-Branch* del_elem(Branch*& aBranch, int aData) {
+Branch* del_elem(Branch*& aBranch, char b, int aData) {
 
 	if (aBranch == NULL)
 		return aBranch;
-	if (aData == aBranch->Data) {
+	if ((std::tie(b, aData) == std::tie(aBranch->bukva, aBranch->Data)))
+	{
 		Branch* tmp;
+		if (aBranch->LeftBranch == NULL)
+			tmp = aBranch->RightBranch;
+		
 		if (aBranch->RightBranch == NULL)
 			tmp = aBranch->LeftBranch;
 
-		else {
-			Branch* ptr = aBranch->RightBranch;
 
-			if (ptr->LeftBranch == NULL) {
-				ptr->LeftBranch = aBranch->LeftBranch;
+		else {
+			Branch* ptr = aBranch->LeftBranch;
+
+			/*if (ptr->RightBranch == NULL) {
+				ptr->RightBranch = aBranch->RightBranch;
 				tmp = ptr;
 
-			}
-			else {
-				Branch* pmin = ptr->LeftBranch;
-				while (pmin->LeftBranch != NULL) {
+			}*/
+			//else {
+				Branch* pmax = ptr->RightBranch;
+				while (pmax->RightBranch != NULL) {
 
-					ptr = pmin;
-					pmin = ptr->LeftBranch;
+					ptr = pmax;
+					pmax = ptr->RightBranch;
 
 				}
 
-				ptr->LeftBranch = pmin->RightBranch;
-				pmin->LeftBranch = aBranch->LeftBranch;
-				pmin->RightBranch = aBranch->RightBranch;
-				tmp = pmin;
-			}
+				ptr->RightBranch = pmax->LeftBranch;
+				pmax->RightBranch = aBranch->RightBranch;
+				pmax->LeftBranch = aBranch->LeftBranch;
+				tmp = pmax;
+			//}
 		}
 		delete aBranch;
-		return tmp;
+		aBranch = tmp;
+		//return tmp;
 	}
-	else if (aData > aBranch->Data)
-		aBranch->LeftBranch = del_elem(aBranch->LeftBranch, aData);
+	else if (aData < aBranch->Data)
+		aBranch->LeftBranch = del_elem(aBranch->LeftBranch, b, aData);
 	else
-		aBranch->RightBranch = del_elem(aBranch->RightBranch, aData);
+		aBranch->RightBranch = del_elem(aBranch->RightBranch, b, aData);
 	return aBranch;
 }
 
 int main()
 
 {
-
-	setlocale(LC_ALL, "rus");
-	Branch* Root = 0;
-	int vel;
-	int element;
-	int k;
-	cout << "Введите кол-во элементов для будущего дерева: ";
-	cin >> vel;
+	bool f = true;
+	Branch* tree = nullptr;
+	Branch* tree2 = nullptr;
+	Add(tree, 'A', 30);
+	Add(tree, 'A', 40);
+	Add(tree, 'A', 35);
+	Add(tree, 'A', 45);
+	Add(tree, 'A', 45);
+	Add(tree, 'A', 20);
+	Add(tree, 'A', 25);
+	Add(tree, 'A', 15);
+	Add(tree, 'A', 10);
+	Add(tree, 'A', 5);
+	Add(tree, 'A', 39);
+	Add(tree, 'A', 39);
+	/*Add(tree, 'A', 39);
+	Add(tree, 'A', 39);
+	Add(tree, 'A', 39);*/
+	print(tree);
+	del_elem(tree, 'A', 45);
+	del_elem(tree, 'A', 40);
+	del_elem(tree, 'A', 39);
+	del_elem(tree, 'A', 35);
+	del_elem(tree, 'A', 30);
+	//del_elem(tree, 'A', 20);
 	cout << endl;
-	cout << "Проверим дерево на пустоту до его заполнения: " << endl;
-	//is_Empty(Root);
-	//cout << endl;
-	for (int i = 0; i < vel; i++)
-
-	{
-
-		Add(rand() % 100, Root);
-
-	}
-	cout << "Проверим дерево на пустоту после его заполнения: " << endl;
-	//is_Empty(Root);
 	cout << endl;
-	cout << "Вывод бинарного дерева: " << endl;
-	print(Root);
-	cout << endl;
+	//Del_al(tree);
 
-	
-	cout << "Добавим новый элемент в бинарное дерево:" << endl;
-	cout << "Введите новый элемент: ";
-	cin >> element;
-	add_elem(element, Root);
-	cout << "Вывод бинарного дерева: " << endl;
-	print(Root);
-	cout << endl;
-	cout << "Удалим элемент из бинарного дерева:" << endl;
-	cout << "Введите нэлемент: ";
-	cin >> element;
-	del_elem(Root, element);
-	cout << "Вывод бинарного дерева: " << endl;
-	print(Root);
-	cout << endl;
 
-	FreeTree(Root);
-	cout << "Вся динамическая память очищена..." << endl;
-	return 0;
+	print(tree);
+	Add(tree2, 'A', 8);
+	Add(tree2, 'A', 9);
+	Add(tree2, 'A', 5);
+	Add(tree2, 'A', 1);
+	Add(tree2, 'A', 11);
+	Add(tree2, 'A', 10);
+	Add(tree2, 'A', 6);
+	Add(tree2, 'A', 7);
+	Add(tree2, 'A', 12);
+	Add(tree2, 'A', 4);
+	Add(tree2, 'A', 39);
+
+	cout << endl;
+	cout << endl;
+	//print(tree);
+	cout << endl;
+	cout << endl;
+	//print(tree2);
+
+
+	cout << endl;
+	cout << endl;
+	//f = FindElem(tree, 'A', 40);
+	//f=inorder(tree, tree2);
+	//cout << f;
+
+
+
+
+	//print(tree);
+
+
 }
