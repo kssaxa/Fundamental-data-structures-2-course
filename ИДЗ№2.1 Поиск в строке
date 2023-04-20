@@ -1,0 +1,135 @@
+// Колпакова Александра - шаблон содержится в каждом из двух полей один раз, алгоритмы:
+//  Рабина – Карпа, Бойера – Мура – Хорспула
+//
+/*в файле :
+номер аудитории, фио преподавателя, время, название дисциплины
+искать в полях :
+фио преподавателя, название дисциплины*/
+
+#include <iostream>
+#include <fstream>
+#include<string>
+#include<tuple>
+#include<chrono>
+
+
+struct auditorium
+{
+	char litera;
+	int num;
+};
+struct fullname
+
+{
+	std::string firstname;	
+};
+struct times
+{
+	int hour;
+	int minutes;
+};
+struct object {
+	std::string predmet;
+};
+struct list
+{
+	auditorium room;
+	fullname name;
+	times time;
+	object predmetName;
+};
+
+//получение количества строк из файла
+void GetSize(int& size, std::string filename)
+{
+	std::ifstream(file);
+	file.open(filename);
+	std::string line;
+	std::getline(file, line);
+	size = std::stoi(line);
+	file.close();
+}
+//считывание массива
+void GetArray(list*& record, int size, std::string filename)
+{
+	std::ifstream(file);
+	file.open(filename);
+	std::string line;
+	getline(file, line);
+	int i = 0;
+	while (i != size)
+	{
+		getline(file, line, ' ');
+		record[i].room.litera = line[0];
+		std::string number = line.erase(0, 1);
+		record[i].room.num = stoi(number);
+		getline(file, line, ' ');
+		record[i].name.firstname = line;
+		getline(file, line, ':');
+		record[i].time.hour = stoi(line);
+		getline(file, line);
+		record[i].time.minutes = stoi(line);
+		getline(file, line);
+		record[i].predmetName.predmet = stoi(line);
+		i++;
+	}
+	file.close();
+}
+//Запись данных в файл
+/*//Запись данных в файл
+void PutArray(list*& record, double time, int size, std::string filename, bool flag)
+{
+	std::ofstream(file);
+	file.open(filename);
+	file << time << "s\n";
+	!flag ? file << "stable\n" : file << "unstable\n";
+	for (int i = 0; i < size; i++)
+	{
+		file << record[i].room.litera << record[i].room.num << " ";
+		file << record[i].name.lastname << " " << record[i].name.firstname << " " << record[i].name.secondname << " ";
+		file << record[i].time.hour << ":" << record[i].time.minutes << std::endl;
+	}
+	file.close();
+}*/
+
+int BMH(std::string text, std::string pattern)
+{
+	int p = pattern.size();           //Getting the size of pattern
+	int t = text.size();              //Getting size of text
+	if (p > t)
+		return -1;           //If pattern is longer than text, pattern is not in text
+
+	int table[128];           //Create a table with 128 size since ASCII code have 128 characters
+
+	for (int i = 0; i < 128; i++)
+		table[i] = p;                //Initialise all elements of table to size of pattern
+
+	for (int j = 0; j < p - 1; j++)
+	{
+		table[int(pattern[j])] = p - j - 1;           //For the elements that are present in pattern change table value using the formula
+	}
+
+
+	int k = p - 1;
+
+	while (k < t)             //While the length of pattern-1 is less than text length (p-1) so as to match indices, starts from 0
+	{
+		int j = p - 1;
+		int i = k;
+
+		while ((j >= 0) && (text[i] == pattern[j]))       //Matching the rightmost character of patter to respective char in text and breakout if j is -1
+		{
+			j--;
+			i--;
+		}
+		if (j == -1)
+			return i + 1;        //Returning the index
+
+		k += table[int(text[k])];             //Updating the index for text to search for, using the bad match table
+	}
+
+	return -1;
+
+
+}
+
