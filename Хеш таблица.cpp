@@ -86,7 +86,7 @@ public:
 		char chars;
 		for (int i = 0; i < size; i++) {
 			//chars = str[i];
-			i_key += str[i];//str[i]
+			i_key += str[i];
 		}
 	}
 
@@ -103,14 +103,10 @@ public:
 			record.hash = key1;
 			if (status[key1] == 0)
 			{
-				/*if (std::tie(record.name.lastname, record.name.firstname, record.name.secondname, record.room.litera, record.room.num,
-					record.subject.predmet, record.time.hour, record.time.minutes)
-					!= std::tie(items[key1].name.lastname, items[key1].name.firstname, items[key1].name.secondname, items[key1].room.litera,
-						items[key1].room.num,items[key1].subject.predmet, items[key1].time.hour, items[key1].time.minutes))*/
-				//{
+			
 				status[key1] = 1;
 				items[key1] = record;
-				//}
+				
 				count++;
 			}
 			else 
@@ -241,56 +237,7 @@ public:
 		}
 
 	}
-	//дописать
-	/*void Delete(list record)
-	{
-		int del =1;
-		for (int i : status) {
-			if (i == 1) {
-				del = 1;
-			}
-		}
-		if (del == 0)
-		{
-			int INT_key = 0;
-			Int_key(record, INT_key);
-			INT_key = INT_key + record.time.hour + record.time.minutes;
-			int key1 = INT_key, key2 = 0;
-			FirstHF(key1);
-			if (status[key1] == 0 || (std::tie(record.name.lastname, record.name.firstname, record.name.secondname, record.room.litera, record.room.num, record.subject.predmet, record.time.hour, record.time.minutes)!=
-				std::tie(items[key1].name.lastname, items[key1].name.firstname, items[key1].name.secondname, items[key1].room.litera, items[key1].room.num, items[key1].subject.predmet, items[key1].time.hour, items[key1].time.minutes))){
-				 del = 0;
-			}
-			else if (status[key1] == 1 && (std::tie(record.name.lastname, record.name.firstname, record.name.secondname, record.room.litera, record.room.num, record.subject.predmet, record.time.hour, record.time.minutes) ==
-				std::tie(items[key1].name.lastname, items[key1].name.firstname, items[key1].name.secondname, items[key1].room.litera, items[key1].room.num, items[key1].subject.predmet, items[key1].time.hour, items[key1].time.minutes)))
-			{
-				status[key1] = 2;
-				del = 1;
-			}
-			else
-			{
-				while (del == 1)
-				{
-					key2 = key1;
-					Collision(key2, status,record);
-					key1 = key2;
-					if (status[key1] == 0)
-						  del = 0;
-					else if (status[key1] == 1 && (std::tie(record.name.firstname, record.room.litera, record.room.num, record.subject.predmet, record.time.hour, record.time.minutes)
-						== std::tie(items[key1].name.firstname, items[key1].room.litera, items[key1].room.num, items[key1].subject.predmet, items[key1].time.hour, items[key1].time.minutes)))
-					{
-						status[key1] = 2;
-						del = 1;
-					}
-				}
-			}
-		}
-		else
-		{
-		
-			del = 0;
-		}
-	}*/
+
 	bool Delete(list record)
 	{
 		int del = 1;
@@ -364,9 +311,7 @@ int main()
 	list record;
 	int search;
 	search = 0;
-//	Table.Search(record);
-	//Table.Delete(record);
-	//Table.Print();
+
 	record.name.lastname = "Ва";
 	record.name.firstname = "Миил";
 	record.name.secondname = "Сервич";
